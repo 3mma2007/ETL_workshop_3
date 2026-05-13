@@ -1,4 +1,4 @@
-# ETL Workshop 3 — Happiness Score Prediction con Apache Kafka + ML
+# ETL Workshop 3 - Happiness Score Prediction con Apache Kafka + ML
 
 **Curso:** ETL  
 **Programa:** Ingeniería de Datos e Inteligencia Artificial  
@@ -63,9 +63,9 @@ ETL_workshop_3/
 
 ### Requisitos previos
 
-- Python 3.8+
-- Google Colab (recomendado) o entorno Linux con acceso a internet
-- Google Drive montado en `/content/drive/Shared drives/ETL_workshop_3/`
+- Python 
+- Google Colab (recomendado) 
+- Google Drive montado en `/content/drive/Shared drives/ETL_workshop_3/` o ajustar ruta
 
 ### 1. Clonar el repositorio y abrir el notebook
 
@@ -80,7 +80,7 @@ Abrir `ETL_workshop_3.ipynb` en Google Colab.
 La primera celda del notebook monta automáticamente el Drive. Asegúrate de que los 5 CSVs están en la ruta:
 
 ```
-/content/drive/Shared drives/ETL_workshop_3/
+/content/drive/Shared drives/ETL_workshop_3/ o la que usted establezca
 ```
 
 ### 3. Ejecutar el notebook en orden
@@ -135,8 +135,8 @@ Todos los datasets fueron normalizados al siguiente esquema común:
 
 ## 🔍 Hallazgos del EDA
 
-- **Correlaciones más altas** con `happiness_score`: `gdp_per_capita`, `social_support` y `life_expectancy` presentan las correlaciones positivas más fuertes.
-- **Outliers**: Se detectaron valores atípicos en `trust_gov` y `generosity`, pero se decidió conservarlos ya que representan casos reales y no errores de medición.
+- **Correlaciones más altas** con `happiness_score`: `gdp_per_capita`, `life_expectancy` y `social_support` presentan las correlaciones positivas más fuertes.
+- **Outliers**: Se detectaron valores atípicos en `trust_gov` y `generosity`, pero se decidió conservarlos ya que representan casos reales y no errores de medición (estan en escalas validas).
 - **Valores faltantes**: Imputados usando KNN Imputer (k=5) para features; filas con `happiness_score` nulo fueron eliminadas.
 - **Año como feature**: Se analizó la variación del score promedio por año y no se observó una tendencia significativa, por lo que el año **no fue incluido** como variable predictora.
 
@@ -153,12 +153,12 @@ Todos los datasets fueron normalizados al siguiente esquema común:
 
 | Métrica | Valor |
 |---|---|
-| R² | ~0.78 |
-| MAE | ~0.43 |
-| RMSE | ~0.55 |
-| MAPE (%) | ~7.8% |
+| R² | ~0.73 |
+| MAE | ~0.44 |
+| RMSE | ~0.57 |
+| MAPE (%) | ~9% |
 
-*(Los valores exactos pueden variar con cada ejecución)*
+*(Los valores exactos pueden variar)*
 
 ---
 
@@ -198,13 +198,13 @@ Tabla: `predicciones`
 
 ## ⚠️ Decisiones de Diseño y Supuestos
 
-1. **KRaft en lugar de ZooKeeper**: Se usa la configuración KRaft de Kafka 3.7.0, que elimina la dependencia de ZooKeeper y simplifica la instalación en entornos efímeros como Google Colab.
+1. **KRaft en lugar de ZooKeeper**: Se usa la configuración KRaft de Kafka 3.7.0, que elimina la dependencia de ZooKeeper y simplifica la instalación.
 
 2. **Un solo topic para X e y**: El Producer envía features y scores reales en el mismo topic (`happiness-features`), diferenciándolos por la presencia o ausencia de la clave `happiness_score` en el payload JSON.
 
 3. **SQLite como base de datos**: Se eligió SQLite por su simplicidad y compatibilidad con Google Colab sin configuración adicional de servidor.
 
-4. **Imputación KNN**: Se usó KNN Imputer en lugar de imputación por mediana por año, ya que captura mejor las relaciones entre variables para datos con estructura geográfica/socioeconómica.
+4. **Imputación KNN**: Se usó KNN Imputer en lugar de imputación por mediana por año, ya que captura mejor las relaciones entre variables.
 
 ---
 
