@@ -15,7 +15,7 @@ El flujo general es:
 ```
 CSVs (5 años) → EDA + Feature Engineering → Modelo de Regresión (.pkl)
                                                     ↓
-                                     Kafka Producer (X_test + y_test)
+                                     Kafka Producer (X_test + y_test + Modelo)
                                                     ↓
                                      Kafka Consumer → Predicciones → SQLite
 ```
