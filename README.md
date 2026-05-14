@@ -166,9 +166,9 @@ Todos los datasets fueron normalizados al siguiente esquema común:
 
 ### Kafka Producer
 
-- Lee `X_test.csv` e `y_test.csv`
+- Lee `X_test.csv`, `y_test.csv` y carga el modelo.
 - Envía cada fila como un mensaje JSON al topic `happiness-features`
-- Primero envía todas las filas de `X_test` (features), luego las de `y_test` (scores reales)
+- Primero envía todas las filas de `X_test` (features), luego las de `y_test` (scores reales) y finalmente el modelo.
 
 ### Kafka Consumer
 
@@ -176,6 +176,7 @@ Todos los datasets fueron normalizados al siguiente esquema común:
 - Detecta el tipo de mensaje por las claves del JSON:
   - Sin clave `happiness_score` → se acumula en `buffer_x` (features)
   - Con clave `happiness_score` → se acumula en `buffer_y` (score real)
+  - Con valor de la clave "type" == "model" → se procesa y guarda en modelo.
 - Una vez finalizado el stream (sin mensajes por 5 segundos), realiza las predicciones y guarda en SQLite
 
 ### Base de Datos (SQLite)
@@ -200,7 +201,7 @@ Tabla: `predicciones`
 
 1. **KRaft en lugar de ZooKeeper**: Se usa la configuración KRaft de Kafka 3.7.0, que elimina la dependencia de ZooKeeper y simplifica la instalación.
 
-2. **Un solo topic para X e y**: El Producer envía features y scores reales en el mismo topic (`happiness-features`), diferenciándolos por la presencia o ausencia de la clave `happiness_score` en el payload JSON.
+2. **Un solo topic para X, y y el modelo**: El Producer envía el modelo, features y scores reales en el mismo topic (`happiness-features`), diferenciándolos por la presencia o ausencia de la clave `happiness_score` y "model" en el payload JSON.
 
 3. **SQLite como base de datos**: Se eligió SQLite por su simplicidad y compatibilidad con Google Colab sin configuración adicional de servidor.
 
